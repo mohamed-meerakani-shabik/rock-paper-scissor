@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+          background-color: #181818;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .game-container {
+            text-align: center;
+            background-color: orange;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1 {
+            font-size: 2em;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .badge {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 0 10px;
+            background-color: #ffeb3b;
+            animation: pop 0.3s ease-out;
+        }
+
+        #user-score, #comp-score {
+            font-size: 2em;
+            margin: 0 10px;
+        }
+
+        .result {
+            margin: 20px 0;
+            min-height: 40px;
+        }
+
+        .result p {
+            font-size: 1.2em;
+            margin: 0;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .choices {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .choice-btn {
+            font-size: 2em;
+            margin: 0 10px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            transition: transform 0.1s ease-in-out;
+        }
+
+        .choice-btn:active {
+            transform: scale(0.9);
+        }
+
+        .win-glow {
+            box-shadow: 0 0 20px 5px green;
+            transition: box-shadow 0.3s ease-in-out;
+        }
+
+        .lose-glow {
+            box-shadow: 0 0 20px 5px red;
+            transition: box-shadow 0.3s ease-in-out;
+        }
+
+        .draw-glow {
+            box-shadow: 0 0 20px 5px gray;
+            transition: box-shadow 0.3s ease-in-out;
+        }
+
+        @keyframes pop {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        body.dark-mode {
+    --background-color: #181818;
+    --text-color: #ffffff;
+    --container-background-color: #282828;
+    --header-background-color: #1f1f1f;
+    --header-text-color: #ffffff;
+    --chat-background-color: #1f1f1f;
+    --message-background-color: #333333;
+    --input-background-color: #282828;
+    --input-box-background-color: #333333;
+    --input-text-color: #ffffff;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 20px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #4caf50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+.theme-toggle-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.theme-toggle {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.theme-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.one{
+    height: 19.2cm;
+        width: 2cm;
+        background-color: orange;
+        margin: 0;
+        margin-top: 0;
+        padding: 2px;
+        position: relative;
+        right: 14cm;
+}
+.box3{
+        height: 19.2cm;
+        width: 2cm;
+        background-color: orange;
+        margin: 0;
+        margin-top: 0;
+        padding: 2px;
+        position: relative;
+        left: 38.2cm;
+        bottom: 5.8cm;
+        margin-top: 0;
+    }
+    </style>
+</head>
+<body>
+    <div class="one"></div>
+    <div class="game-container">
+        
+        <h1>Rock, Paper, Scissors</h1>
+        <div class="score-board">
+            <div id="user-label" class="badge">User</div>
+            <div id="comp-label" class="badge">Comp</div>
+        </div>
+        <span id="user-score">0</span>:<span id="comp-score">0</span>
+        <div class="result">
+            <p id="result-message">Make your move!</p>
+        </div>
+        <div class="choices" >
+            <button id="rock" class="choice-btn">✊</button>
+            <button id="paper" class="choice-btn">✋</button>
+            <button id="scissors" class="choice-btn">✌️</button>
+        </div>
+        
+    </div>
+    <script>
+        let userScore = 0;
+        let compScore = 0;
+        const userScoreSpan = document.getElementById('user-score');
+        const compScoreSpan = document.getElementById('comp-score');
+        const resultMessage = document.getElementById('result-message');
+        const rockBtn = document.getElementById('rock');
+        const paperBtn = document.getElementById('paper');
+        const scissorsBtn = document.getElementById('scissors');
+
+        function getComputerChoice() {
+            const choices = ['rock', 'paper', 'scissors'];
+            return choices[Math.floor(Math.random() * choices.length)];
+        }
+
+        function convertToEmoji(choice) {
+            if (choice === 'rock') return '✊';
+            if (choice === 'paper') return '✋';
+            return '✌️';
+        }
+
+        function addGlow(result) {
+            const gameContainer = document.querySelector('.game-container');
+            if (result === 'win') {
+                gameContainer.classList.add('win-glow');
+                setTimeout(() => gameContainer.classList.remove('win-glow'), 1000);
+            } else if (result === 'lose') {
+                gameContainer.classList.add('lose-glow');
+                setTimeout(() => gameContainer.classList.remove('lose-glow'), 1000);
+            } else {
+                gameContainer.classList.add('draw-glow');
+                setTimeout(() => gameContainer.classList.remove('draw-glow'), 1000);
+            }
+        }
+
+        function animateResult() {
+            resultMessage.classList.remove('animate');
+            void resultMessage.offsetWidth; // Trigger reflow to restart animation
+            resultMessage.classList.add('animate');
+        }
+
+        function win(userChoice, computerChoice) {
+            userScore++;
+            userScoreSpan.innerText = userScore;
+            resultMessage.innerText = `${convertToEmoji(userChoice)} beats ${convertToEmoji(computerChoice)}. You win! 🎉`;
+            animateResult();
+            addGlow('win');
+        }
+
+        function lose(userChoice, computerChoice) {
+            compScore++;
+            compScoreSpan.innerText = compScore;
+            resultMessage.innerText = `${convertToEmoji(userChoice)} loses to ${convertToEmoji(computerChoice)}. You lost... 😞`;
+            animateResult();
+            addGlow('lose');
+        }
+
+        function draw(userChoice, computerChoice) {
+            resultMessage.innerText = `${convertToEmoji(userChoice)} equals ${convertToEmoji(computerChoice)}. It's a draw! 🤝`;
+            animateResult();
+            addGlow('draw');
+        }
+
+        function game(userChoice) {
+            const computerChoice = getComputerChoice();
+            switch (userChoice + computerChoice) {
+                case 'rockscissors':
+                case 'paperrock':
+                case 'scissorspaper':
+                    win(userChoice, computerChoice);
+                    break;
+                case 'rockpaper':
+                case 'paperscissors':
+                case 'scissorsrock':
+                    lose(userChoice, computerChoice);
+                    break;
+                default:
+                    draw(userChoice, computerChoice);
+                    break;
+            }
+        }
+
+        rockBtn.addEventListener('click', () => game('rock'));
+        paperBtn.addEventListener('click', () => game('paper'));
+        scissorsBtn.addEventListener('click', () => game('scissors'));
+        document.addEventListener('DOMContentLoaded', () => {
+    const chatBox = document.getElementById('chat-box');
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+    const themeSwitch = document.getElementById('theme-switch');
+    const themeLabel = document.getElementById('theme-label');
+
+    // Load theme preference from local storage
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeSwitch.checked = true;
+        themeLabel.innerText = 'Dark Mode';
+    } else {
+        themeLabel.innerText = 'Light Mode';
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    themeSwitch.addEventListener('change', toggleTheme);
+
+    function sendMessage() {
+        const userMessage = chatInput.value.trim();
+        if (userMessage === '') return;
+
+        addMessageToChat(userMessage, 'user-message');
+        chatInput.value = '';
+        chatInput.focus();
+
+        // Send message to the server (API)
+        fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: userMessage }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            addMessageToChat(data.response, 'bot-message');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            addMessageToChat('Error connecting to the server. Please try again.', 'bot-message');
+        });
+    }
+
+    function addMessageToChat(message, className) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('chat-message', className);
+        messageElement.textContent = message;
+        chatBox.appendChild(messageElement);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        if (document.body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+            themeLabel.innerText = 'Dark Mode';
+        } else {
+            localStorage.setItem('theme', 'light');
+            themeLabel.innerText = 'Light Mode';
+        }
+    }
+});
+    </script>
+</body>
+</html>
